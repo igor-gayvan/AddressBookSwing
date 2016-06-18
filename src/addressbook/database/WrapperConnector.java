@@ -43,18 +43,15 @@ public class WrapperConnector {
             user = props.getProperty("db.user");
             pass = props.getProperty("db.password");
             useSSL = props.getProperty("db.useSSL");
-        } catch (FileNotFoundException ex) {
-            try {
-                ResourceBundle resource = ResourceBundle.getBundle("config.database");
 
-                driver = resource.getString("db.driver");
-                url = resource.getString("db.url");
-                user = resource.getString("db.user");
-                pass = resource.getString("db.password");
-                useSSL = resource.getString("db.useSSL");
-            } catch (MissingResourceException e) {
-                System.err.println("properties file is missing " + e);
-            }
+        } catch (IOException ex) {
+            ResourceBundle resource = ResourceBundle.getBundle("addressbook.config.database");
+
+            driver = resource.getString("db.driver");
+            url = resource.getString("db.url");
+            user = resource.getString("db.user");
+            pass = resource.getString("db.password");
+            useSSL = resource.getString("db.useSSL");
         }
 
         try {
@@ -64,13 +61,11 @@ public class WrapperConnector {
         }
     }
 
-    private static Properties loadProperties() throws FileNotFoundException {
+    private static Properties loadProperties() throws FileNotFoundException, IOException {
         Properties props = new Properties();
-        try (FileInputStream fis = new FileInputStream(NAME_FILE_PROPERTIS)) {
-            props.load(fis);
-        } catch (IOException ex) {
-            Logger.getLogger(WrapperConnector.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        FileInputStream fis = new FileInputStream(NAME_FILE_PROPERTIS);
+        props.load(fis);
+        fis.close();
         return props;
     }
 
