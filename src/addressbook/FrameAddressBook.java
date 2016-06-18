@@ -5,17 +5,90 @@
  */
 package addressbook;
 
+import static addressbook.AddressBook.contactList;
+import addressbook.database.dao.ContactDAO;
+import addressbook.subject.contact.Contact;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.DefaultListModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
 /**
  *
  * @author Igor Gayvan
  */
-public class jfAddressBook extends javax.swing.JFrame {
+public class FrameAddressBook extends javax.swing.JFrame {
+
+    static List<Contact> contactList1 = new ArrayList<Contact>();
+
+    ContactDAO contactDAO = new ContactDAO();
 
     /**
      * Creates new form jfAddressBook
      */
-    public jfAddressBook() {
+    public FrameAddressBook() {
         initComponents();
+
+        setLocationRelativeTo(null);
+
+        jtContacts.setModel(GetDataForGrid());
+    }
+
+    private DefaultTableModel GetDataForGrid() {
+        DefaultTableModel defaultTableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (getColumnName(column).equalsIgnoreCase("id")) {
+                    return false;
+                }
+
+                return super.isCellEditable(row, column);
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (!getDataVector().isEmpty()) {
+                    Vector cells = (Vector) getDataVector().get(0);
+                    Object get = cells.get(columnIndex);
+                    if (get != null) {
+                        return get.getClass();
+                    }
+                }
+
+                return super.getColumnClass(columnIndex);
+            }
+
+        };
+
+        contactList = contactDAO.selectAll();
+
+        Vector<String> columns = new Vector<>();
+        columns.add("Id");
+        columns.add("NameFull");
+        columns.add("Skype");
+        columns.add("Phone");
+        columns.add("Email");
+
+        Vector<Vector> rows = new Vector<>();
+
+        for (Contact contact : contactList) {
+            Vector<Object> cells = new Vector<>();
+
+            cells.add(contact.getId());
+            cells.add(contact.getNameFull());
+            cells.add(contact.getSkype());
+            cells.add(contact.getPhone());
+            cells.add(contact.getEmail());
+
+            rows.add(cells);
+        }
+
+        defaultTableModel.setDataVector(rows, columns);
+
+        return defaultTableModel;
     }
 
     /**
@@ -28,9 +101,10 @@ public class jfAddressBook extends javax.swing.JFrame {
     private void initComponents() {
 
         jToolBar1 = new javax.swing.JToolBar();
-        jButton3 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jbRefresh = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
@@ -44,22 +118,56 @@ public class jfAddressBook extends javax.swing.JFrame {
         jToolBar1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jToolBar1.setRollover(true);
 
-        jButton3.setText("Добавить");
-        jToolBar1.add(jButton3);
+        jButton8.setText("Добавить");
+        jButton8.setBorderPainted(false);
+        jButton8.setFocusPainted(false);
+        jButton8.setFocusable(false);
+        jButton8.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton8.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jButton8);
 
         jButton4.setText("Изменить");
+        jButton4.setBorderPainted(false);
+        jButton4.setFocusPainted(false);
+        jButton4.setFocusable(false);
         jToolBar1.add(jButton4);
 
         jButton5.setText("Удалить");
+        jButton5.setBorderPainted(false);
+        jButton5.setFocusPainted(false);
+        jButton5.setFocusable(false);
         jToolBar1.add(jButton5);
 
+        jbRefresh.setText("Обновить");
+        jbRefresh.setBorder(null);
+        jbRefresh.setBorderPainted(false);
+        jbRefresh.setFocusPainted(false);
+        jbRefresh.setFocusable(false);
+        jbRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jbRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jbRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbRefreshActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jbRefresh);
+
         jButton6.setText("Искать");
+        jButton6.setBorderPainted(false);
+        jButton6.setFocusPainted(false);
+        jButton6.setFocusable(false);
         jToolBar1.add(jButton6);
 
         jButton2.setText("Сортировать");
+        jButton2.setBorderPainted(false);
+        jButton2.setFocusPainted(false);
+        jButton2.setFocusable(false);
         jToolBar1.add(jButton2);
 
         jButton7.setText("Выйти");
+        jButton7.setBorderPainted(false);
+        jButton7.setFocusPainted(false);
+        jButton7.setFocusable(false);
         jToolBar1.add(jButton7);
 
         jtContacts.setModel(new javax.swing.table.DefaultTableModel(
@@ -97,6 +205,10 @@ public class jfAddressBook extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jbRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRefreshActionPerformed
+        jtContacts.setModel(GetDataForGrid());
+    }//GEN-LAST:event_jbRefreshActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -114,33 +226,35 @@ public class jfAddressBook extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(jfAddressBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameAddressBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(jfAddressBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameAddressBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(jfAddressBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameAddressBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(jfAddressBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameAddressBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new jfAddressBook().setVisible(true);
+                new FrameAddressBook().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JButton jbRefresh;
     private javax.swing.JTable jtContacts;
     // End of variables declaration//GEN-END:variables
 }

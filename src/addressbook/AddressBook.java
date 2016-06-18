@@ -9,7 +9,6 @@ import addressbook.database.ConnectionPool;
 import addressbook.subject.contact.Contact;
 import addressbook.subject.contact.ContactFields;
 import addressbook.database.dao.ContactDAO;
-import addressbook.database.dao.ContactDAO1;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,6 @@ import addressbook.listeners.ISortActionListener;
 public class AddressBook {
 
     static List<Contact> contactList = new ArrayList<Contact>();
-    static List<Contact> contactList1 = new ArrayList<Contact>();
 
     /**
      * @param args the command line arguments
@@ -36,9 +34,7 @@ public class AddressBook {
         ShowData showData = new ShowData();
 
         ContactDAO contactDAO = new ContactDAO();
-        ContactDAO1 contactDAO1 = new ContactDAO1();
         contactList = contactDAO.selectAll();
-        contactList1 = contactDAO1.selectAll();
 
         console.addActionListener(new IActionListener() {
             // Выход
