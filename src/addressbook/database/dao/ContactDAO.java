@@ -111,14 +111,17 @@ public class ContactDAO extends AbstractDAO<Contact> {
             cs.setString("pi_phone", contact.getPhone());
             cs.setString("pi_skype", contact.getSkype());
             cs.setString("pi_email", contact.getEmail());
+            cs.registerOutParameter(1, java.sql.Types.INTEGER);
 
             int executeUpdate = cs.executeUpdate();
+            
+            contact.setId(cs.getInt(1));
 
-            try (ResultSet rs = cs.getGeneratedKeys()) {
-                if (rs.next()) {
-                    contact.setId(rs.getInt(1));
-                }
-            }
+//            try (ResultSet rs = cs.getGeneratedKeys()) {
+//                if (rs.next()) {
+//                    contact.setId(rs.getInt(1));
+//                }
+//            }
 
             isInserted = executeUpdate > 0;
         } catch (SQLException e) {

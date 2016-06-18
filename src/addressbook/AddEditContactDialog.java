@@ -5,53 +5,67 @@
  */
 package addressbook;
 
+import static addressbook.AddressBook.contactList;
 import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
-import static java.awt.Dialog.ModalityType.MODELESS;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JTextField;
 
 /**
  *
  * @author Igor Gayvan
  */
-public class AddEditContactFrame extends javax.swing.JDialog {
+public class AddEditContactDialog extends javax.swing.JDialog {
 
-    private int contactId;
-    ContactDAO contactDAO = new ContactDAO();
+    private ContactDAO contactDAO = new ContactDAO();
+    private Contact contact = new Contact();
 
-    public int getContactId() {
-        return contactId;
-    }
-
-    public void setContactId(int contactId) {
-        this.contactId = contactId;
-    }
+    EModeAddEditFrom modeAddEditFrom;    
+    
 
     /**
      * Creates new form FrameAddContact
      */
-    public AddEditContactFrame() {
-        initComponents();
+    ;
 
-        jtfId.setText("");
-        jtfNameFull.setText("");
-        jtfPhone.setText("");
-        jtfSkype.setText("");
-        jtfEmail.setText("");
+    public Contact getContact() {
+        return contact;
     }
 
-    public AddEditContactFrame(int contactId) {
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
+    public AddEditContactDialog() {
         initComponents();
-        
-        this.contactId = contactId;
+        jtfNameFull.requestFocus();
+        modeAddEditFrom = EModeAddEditFrom.ADD;
 
-        Contact contact = contactDAO.findEntityById(contactId);
+        this.setModal(true);
 
-        jtfId.setText(String.valueOf(contact.getId()));
-        jtfNameFull.setText(contact.getNameFull());
-        jtfPhone.setText(contact.getPhone());
-        jtfSkype.setText(contact.getSkype());
-        jtfEmail.setText(contact.getEmail());
+        initFields();
+    }
+
+    public AddEditContactDialog(int id) {
+        initComponents();
+        jtfNameFull.requestFocus();
+        modeAddEditFrom = EModeAddEditFrom.EDIT;
+
+        this.setModal(true);
+
+        contact.setId(id);
+        contact = contactDAO.findEntityById(contact.getId());
+
+        initFields();
+    }
+
+    private void initFields() {
+        jtfId.setText("0".equals(String.valueOf(contact.getId())) ? "" : String.valueOf(contact.getId()));
+        jtfNameFull.setText(contact.getNameFull() != null ? contact.getNameFull() : "");
+        jtfPhone.setText(contact.getPhone() != null ? contact.getPhone() : "");
+        jtfSkype.setText(contact.getSkype() != null ? contact.getSkype() : "");
+        jtfEmail.setText(contact.getEmail() != null ? contact.getEmail() : "");
     }
 
     /**
@@ -79,7 +93,6 @@ public class AddEditContactFrame extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Добавление");
-        setModalityType(java.awt.Dialog.ModalityType.MODELESS);
         setName("jfrAddEdditContact"); // NOI18N
 
         jbAccept.setText("Принять");
@@ -97,7 +110,7 @@ public class AddEditContactFrame extends javax.swing.JDialog {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(" Контакт "));
 
         jLabel1.setText("ID");
 
@@ -132,20 +145,19 @@ public class AddEditContactFrame extends javax.swing.JDialog {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel2)
+                        .addComponent(jLabel5)
+                        .addComponent(jLabel4))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel4)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(132, 132, 132)
+                        .addGap(120, 120, 120)
                         .addComponent(jLabel1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jtfId, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                    .addComponent(jtfId, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
                     .addComponent(jtfNameFull)
                     .addComponent(jtfPhone)
                     .addComponent(jtfSkype)
@@ -155,7 +167,6 @@ public class AddEditContactFrame extends javax.swing.JDialog {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jtfId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -174,36 +185,37 @@ public class AddEditContactFrame extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jtfEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(87, Short.MAX_VALUE))
+                    .addComponent(jtfEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jbAccept)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jbCancel)
-                .addGap(21, 21, 21))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jbAccept)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jbCancel)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbAccept)
                     .addComponent(jbCancel))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jPanel1.getAccessibleContext().setAccessibleName(" Контакт ");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -213,6 +225,25 @@ public class AddEditContactFrame extends javax.swing.JDialog {
     }//GEN-LAST:event_jbCancelActionPerformed
 
     private void jbAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAcceptActionPerformed
+
+        contact.setNameFull(jtfNameFull.getText());
+        contact.setPhone(jtfPhone.getText());
+        contact.setSkype(jtfSkype.getText());
+        contact.setEmail(jtfEmail.getText());
+
+        switch (modeAddEditFrom) {
+            case ADD: {
+                contactDAO.insert(contact);
+                break;
+            }
+
+            case EDIT: {
+                contact.setId(Integer.valueOf(jtfId.getText()));
+                contactDAO.update(contact);
+                break;
+            }
+        }
+
         dispose();
     }//GEN-LAST:event_jbAcceptActionPerformed
 
@@ -237,14 +268,18 @@ public class AddEditContactFrame extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddEditContactFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddEditContactDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddEditContactFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddEditContactDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddEditContactFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddEditContactDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddEditContactFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddEditContactDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -253,7 +288,7 @@ public class AddEditContactFrame extends javax.swing.JDialog {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AddEditContactFrame().setVisible(true);
+                new AddEditContactDialog().setVisible(true);
             }
         });
     }

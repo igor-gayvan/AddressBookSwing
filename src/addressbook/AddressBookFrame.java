@@ -20,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class AddressBookFrame extends javax.swing.JFrame {
 
-    static List<Contact> contactList1 = new ArrayList<Contact>();
+    static List<Contact> contactList = new ArrayList<Contact>();
 
     ContactDAO contactDAO = new ContactDAO();
 
@@ -33,6 +33,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
 
         jtContacts.setModel(GetDataForGrid());
+        jtContacts.requestFocus();
     }
 
     private DefaultTableModel GetDataForGrid() {
@@ -102,6 +103,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         jbAdd = new javax.swing.JButton();
         jbEdit = new javax.swing.JButton();
         jbDelete = new javax.swing.JButton();
+        jbView = new javax.swing.JButton();
         jbRefresh = new javax.swing.JButton();
         jbFind = new javax.swing.JButton();
         jbSort = new javax.swing.JButton();
@@ -115,6 +117,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(1024, 768));
 
         jToolBar1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
         jbAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/notification_add.png"))); // NOI18N
@@ -150,9 +153,17 @@ public class AddressBookFrame extends javax.swing.JFrame {
         jbDelete.setFocusable(false);
         jToolBar1.add(jbDelete);
 
+        jbView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/view.png"))); // NOI18N
+        jbView.setToolTipText("Просмотр");
+        jbView.setBorderPainted(false);
+        jbView.setFocusPainted(false);
+        jbView.setFocusable(false);
+        jbView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jbView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jbView);
+
         jbRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/refresh.png"))); // NOI18N
-        jbRefresh.setToolTipText("Обновить");
-        jbRefresh.setBorder(null);
+        jbRefresh.setToolTipText("Искать");
         jbRefresh.setBorderPainted(false);
         jbRefresh.setFocusPainted(false);
         jbRefresh.setFocusable(false);
@@ -226,15 +237,25 @@ public class AddressBookFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jbRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRefreshActionPerformed
-        jtContacts.setModel(GetDataForGrid());
-    }//GEN-LAST:event_jbRefreshActionPerformed
-
     private void jbAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAddActionPerformed
-        AddEditContactFrame addContactFrame = new AddEditContactFrame();
-        addContactFrame.setTitle("Добавление");
-        addContactFrame.setLocationRelativeTo(this);
-        addContactFrame.setVisible(true);
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog();
+        addEditContactDialog.setTitle("Добавление");
+        addEditContactDialog.setLocationRelativeTo(this);
+        addEditContactDialog.setVisible(true);
+
+        Contact contact = addEditContactDialog.getContact();
+        contactList.add(contact);
+
+        DefaultTableModel model = (DefaultTableModel) jtContacts.getModel();
+        Vector<Object> rowData = new Vector<>();
+
+        rowData.add(contact.getId());
+        rowData.add(contact.getNameFull());
+        rowData.add(contact.getSkype());
+        rowData.add(contact.getPhone());
+        rowData.add(contact.getEmail());
+
+        model.addRow(rowData);
     }//GEN-LAST:event_jbAddActionPerformed
 
     private void jbExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbExitActionPerformed
@@ -242,17 +263,27 @@ public class AddressBookFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jbExitActionPerformed
 
     private void jbEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditActionPerformed
-        int contactId = (int) jtContacts.getModel().getValueAt(jtContacts.getSelectedRow(), 0);
-        
-        AddEditContactFrame addContactFrame = new AddEditContactFrame(contactId);
-        addContactFrame.setTitle("Изменение");
-        addContactFrame.setLocationRelativeTo(this);
-        addContactFrame.setVisible(true);
+        int curRow = jtContacts.getSelectedRow();
+        int id = (int) jtContacts.getModel().getValueAt(curRow, 0);
 
-        
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(id);
+        addEditContactDialog.setTitle("Изменение");
+        addEditContactDialog.setLocationRelativeTo(this);
+        addEditContactDialog.setVisible(true);
 
-//        addContactFrame.setJtfId = jtContacts.getSelectionModel().;
+        int indexOfCurContact = contactList.indexOf(new Contact(id));
+        contactList.set(indexOfCurContact, addEditContactDialog.getContact());
+
+        jtContacts.getModel().setValueAt(contactList.get(curRow).getNameFull(), curRow, 1);
+        jtContacts.getModel().setValueAt(contactList.get(curRow).getSkype(), curRow, 2);
+        jtContacts.getModel().setValueAt(contactList.get(curRow).getPhone(), curRow, 3);
+        jtContacts.getModel().setValueAt(contactList.get(curRow).getEmail(), curRow, 4);
     }//GEN-LAST:event_jbEditActionPerformed
+
+    private void jbRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRefreshActionPerformed
+        jtContacts.setModel(GetDataForGrid());
+        jtContacts.requestFocus();
+    }//GEN-LAST:event_jbRefreshActionPerformed
 
     /**
      * @param args the command line arguments
@@ -302,6 +333,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
     private javax.swing.JButton jbFind;
     private javax.swing.JButton jbRefresh;
     private javax.swing.JButton jbSort;
+    private javax.swing.JButton jbView;
     private javax.swing.JTable jtContacts;
     // End of variables declaration//GEN-END:variables
 }
