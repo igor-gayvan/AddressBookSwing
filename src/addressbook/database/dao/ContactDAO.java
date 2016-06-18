@@ -131,7 +131,39 @@ public class ContactDAO extends AbstractDAO<Contact> {
 
     @Override
     public Contact findEntityById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        getConnection();
+
+        Contact contact = new Contact();
+        try {
+            cs = connection.prepareCall(SQL_CONTACT_SELECT_LIST);
+
+            cs.setInt("pi_contact_id", id);
+
+            cs.setNull("pi_name_full", java.sql.Types.VARCHAR);
+
+            resultSet = cs.executeQuery();
+
+            //contact_id int(11) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+            //name_full varchar(255) NOT NULL COMMENT 'ФИО',
+            //phone varchar(255) DEFAULT NULL COMMENT 'Телефон',
+            //skype varchar(255) DEFAULT NULL COMMENT 'Скайп',
+            //email varchar(255) DEFAULT NULL COMMENT 'Электронная почта',
+            while (resultSet.next()) {
+
+                contact.setId(resultSet.getInt("contact_id"));
+                contact.setNameFull(resultSet.getString("name_full"));
+                contact.setPhone(resultSet.getString("phone"));
+                contact.setSkype(resultSet.getString("skype"));
+                contact.setEmail(resultSet.getString("email"));
+
+            }
+        } catch (SQLException e) {
+            System.err.println("SQL exception (request or table failed):\n " + e);
+        } finally {
+            closeConnection();
+        }
+
+        return contact;
     }
 
     @Override
