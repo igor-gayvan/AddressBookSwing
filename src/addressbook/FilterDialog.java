@@ -9,91 +9,29 @@ import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
 import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
-import addressbook.listeners.IAddEditContactListener;
 import java.util.List;
 
 /**
  *
  * @author Igor Gayvan
  */
-public class AddEditContactDialog extends javax.swing.JDialog {
+public class FilterDialog extends javax.swing.JDialog {
 
     private ContactDAO contactDAO = new ContactDAO();
-    private Contact contact = new Contact();
     private boolean result = false;
+    private List<Contact> contactList;
 
-    private EModeAddEditForm modeAddEditForm;
+    public FilterDialog() {
+        initComponents();
+    }
 
-    private List<IAddEditContactListener> addEditContactListeners;
-
-    public AddEditContactDialog() {
+    public FilterDialog(List<Contact> contactList) {
         initComponents();
         jtfNameFull.requestFocus();
-
+        this.setTitle("Установка параметров фмльтрации");
         this.setModal(true);
 
-        initFields();
-    }
-
-    public AddEditContactDialog(Contact contact, EModeAddEditForm modeAddEditForm) {
-        initComponents();
-        jtfNameFull.requestFocus();
-        switch (modeAddEditForm) {
-            case ADD: {
-                this.setTitle("Добавление");
-                jbAccept.setVisible(true);
-                jbCancel.setVisible(true);
-                jbExit.setVisible(false);
-                break;
-            }
-            case EDIT: {
-                this.setTitle("Изменение");
-                jbAccept.setVisible(true);
-                jbCancel.setVisible(true);
-                jbExit.setVisible(false);
-                break;
-            }
-            case VIEW: {
-                this.setTitle("Просмотр");
-                jbAccept.setVisible(false);
-                jbCancel.setVisible(false);
-                jbExit.setVisible(true);
-                break;
-            }
-        }
-        this.modeAddEditForm = modeAddEditForm;
-        this.setModal(true);
-        this.contact = contact;
-
-        initFields();
-    }
-
-    public Contact getContact() {
-        return contact;
-    }
-
-    public void setContact(Contact contact) {
-        this.contact = contact;
-    }
-
-    public boolean getResult() {
-        return result;
-    }
-
-    public JTextField getJtfEmail() {
-        return jtfEmail;
-    }
-
-    public void setJtfEmail(JTextField jtfEmail) {
-        this.jtfEmail = jtfEmail;
-    }
-
-    public JTextField getJtfId() {
-        return jtfId;
-    }
-
-    public void setJtfId(JTextField jtfId) {
-        this.jtfId = jtfId;
+        this.contactList = contactList;
     }
 
     public JTextField getJtfNameFull() {
@@ -104,31 +42,7 @@ public class AddEditContactDialog extends javax.swing.JDialog {
         this.jtfNameFull = jtfNameFull;
     }
 
-    public JTextField getJtfPhone() {
-        return jtfPhone;
-    }
-
-    public void setJtfPhone(JTextField jtfPhone) {
-        this.jtfPhone = jtfPhone;
-    }
-
-    public JTextField getJtfSkype() {
-        return jtfSkype;
-    }
-
-    public void setJtfSkype(JTextField jtfSkype) {
-        this.jtfSkype = jtfSkype;
-    }
-
-    public EModeAddEditForm getModeAddEditForm() {
-        return modeAddEditForm;
-    }
-
-    public void setModeAddEditFrom(EModeAddEditForm modeAddEditForm) {
-        this.modeAddEditForm = modeAddEditForm;
-    }
-
-    public boolean isResult() {
+    public boolean getResult() {
         return result;
     }
 
@@ -136,13 +50,15 @@ public class AddEditContactDialog extends javax.swing.JDialog {
         this.result = result;
     }
 
-    private void initFields() {
-        jtfId.setText("0".equals(String.valueOf(contact.getId())) ? "" : String.valueOf(contact.getId()));
-        jtfNameFull.setText(contact.getNameFull() != null ? contact.getNameFull() : "");
-        jtfPhone.setText(contact.getPhone() != null ? contact.getPhone() : "");
-        jtfSkype.setText(contact.getSkype() != null ? contact.getSkype() : "");
-        jtfEmail.setText(contact.getEmail() != null ? contact.getEmail() : "");
+    public List<Contact> getContactList() {
+        return contactList;
     }
+
+    public void setContactList(List<Contact> contactList) {
+        this.contactList = contactList;
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -154,20 +70,11 @@ public class AddEditContactDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jtfId = new javax.swing.JTextField();
         jtfNameFull = new javax.swing.JTextField();
-        jtfPhone = new javax.swing.JTextField();
-        jtfSkype = new javax.swing.JTextField();
-        jtfEmail = new javax.swing.JTextField();
         jToolBar1 = new javax.swing.JToolBar();
         jbAccept = new javax.swing.JButton();
         jbCancel = new javax.swing.JButton();
-        jbExit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Добавление");
@@ -186,33 +93,7 @@ public class AddEditContactDialog extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(" Контакт "));
 
-        jLabel1.setText("ID");
-
         jLabel2.setText("Полное наименование");
-
-        jLabel3.setText("Телефон");
-
-        jLabel4.setText("Email");
-
-        jLabel5.setText("Скайп");
-
-        jtfId.setEditable(false);
-        jtfId.setBackground(new java.awt.Color(204, 204, 204));
-        jtfId.setText("jTextField1");
-        jtfId.setAutoscrolls(false);
-        jtfId.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtfIdActionPerformed(evt);
-            }
-        });
-
-        jtfNameFull.setText("jTextField1");
-
-        jtfPhone.setText("jTextField1");
-
-        jtfSkype.setText("jTextField1");
-
-        jtfEmail.setText("jTextField1");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -220,46 +101,18 @@ public class AddEditContactDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel5)
-                        .addComponent(jLabel4))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(120, 120, 120)
-                        .addComponent(jLabel1)))
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jtfId, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
-                    .addComponent(jtfNameFull)
-                    .addComponent(jtfPhone)
-                    .addComponent(jtfSkype)
-                    .addComponent(jtfEmail))
+                .addComponent(jtfNameFull, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jtfId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jtfNameFull, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jtfPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jtfSkype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jtfEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 98, Short.MAX_VALUE))
         );
 
         jToolBar1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -285,18 +138,6 @@ public class AddEditContactDialog extends javax.swing.JDialog {
             }
         });
         jToolBar1.add(jbCancel);
-
-        jbExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/exit.png"))); // NOI18N
-        jbExit.setToolTipText("Закрыть");
-        jbExit.setFocusable(false);
-        jbExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jbExit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jbExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbExitActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(jbExit);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -325,20 +166,12 @@ public class AddEditContactDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jbCancelActionPerformed
 
     private void jbAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAcceptActionPerformed
-        this.contact.setNameFull(jtfNameFull.getText());
-        this.contact.setPhone(jtfPhone.getText());
-        this.contact.setSkype(jtfSkype.getText());
-        this.contact.setEmail(jtfEmail.getText());
+        contactDAO.setFilterNameFull(jtfNameFull.getText());
+        contactList = contactDAO.selectAll();
+        result = true;
 
-        for (IAddEditContactListener addEditContactListener : addEditContactListeners) {
-            addEditContactListener.addNewContact();
-        }
         dispose();
     }//GEN-LAST:event_jbAcceptActionPerformed
-
-    private void jtfIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfIdActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtfIdActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         if (KeyEvent.VK_ESCAPE == evt.getKeyCode()) {
@@ -357,10 +190,6 @@ public class AddEditContactDialog extends javax.swing.JDialog {
             jbCancel.doClick();
         }
     }//GEN-LAST:event_formKeyTyped
-
-    private void jbExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbExitActionPerformed
-        dispose();
-    }//GEN-LAST:event_jbExitActionPerformed
 
     /**
      * @param args the command line arguments
@@ -399,31 +228,18 @@ public class AddEditContactDialog extends javax.swing.JDialog {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AddEditContactDialog().setVisible(true);
+                new FilterDialog().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton jbAccept;
     private javax.swing.JButton jbCancel;
-    private javax.swing.JButton jbExit;
-    private javax.swing.JTextField jtfEmail;
-    private javax.swing.JTextField jtfId;
     private javax.swing.JTextField jtfNameFull;
-    private javax.swing.JTextField jtfPhone;
-    private javax.swing.JTextField jtfSkype;
     // End of variables declaration//GEN-END:variables
-
-    public void addActionListener(IAddEditContactListener addEditContactListener) {
-        addEditContactListeners.add(addEditContactListener);
-    }
 
 }

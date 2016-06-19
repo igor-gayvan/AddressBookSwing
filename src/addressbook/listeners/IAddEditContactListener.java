@@ -5,10 +5,14 @@
  */
 package addressbook.listeners;
 
+import addressbook.subject.contact.Contact;
+
 /**
  *
  * @author Igor Gayvan
  */
-public interface IAcceptAddEdit {
-    
+public interface IAddEditContactListener {
+
+    public void addNewContact();
+
 }

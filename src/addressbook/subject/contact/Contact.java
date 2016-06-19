@@ -22,8 +22,6 @@ public class Contact extends EntityAddressBook implements Comparable<Contact> {
     private static ContactFields compareField;
     private static int sortAsc = 1;
 
-    private ContactFields currentInputField;
-
     public Contact() {
         super();
     }
@@ -95,14 +93,6 @@ public class Contact extends EntityAddressBook implements Comparable<Contact> {
         this.skype = skype;
     }
 
-    public ContactFields getCurrentInputField() {
-        return currentInputField;
-    }
-
-    public void setCurrentInputField(ContactFields currentInputField) {
-        this.currentInputField = currentInputField;
-    }
-
     public void showContact() {
         System.out.println("\nContact's info ");
         System.out.printf("ID: %s%n", this.id);
@@ -111,28 +101,6 @@ public class Contact extends EntityAddressBook implements Comparable<Contact> {
         System.out.printf("Email: %s%n", this.email);
         System.out.printf("Skype: %s%n", this.skype);
         System.out.println("");
-    }
-
-    public void showPromptInputContact() {
-        if (currentInputField == null) {
-            currentInputField = ContactFields.NAME_FULL;
-            System.out.println("\nInput contact's data:");
-        }
-
-        switch (currentInputField) {
-            case NAME_FULL:
-                System.out.printf("Input full name%s:", this.nameFull != null ? " (current value - " + this.nameFull + ")" : "");
-                break;
-            case PHONE:
-                System.out.printf("Input phone%s:", this.phone != null ? " (current value - " + this.phone + ")" : "");
-                break;
-            case EMAIL:
-                System.out.printf("Input email%s:", this.email != null ? " (current value - " + this.email + ")" : "");
-                break;
-            case SKYPE:
-                System.out.printf("Input skype%s:", this.skype != null ? " (current value - " + this.skype + ")" : "");
-                break;
-        }
     }
 
     @Override
@@ -184,27 +152,4 @@ public class Contact extends EntityAddressBook implements Comparable<Contact> {
         return getId();
     }
 
-    public static ContactFields getCodeFieldByName(String fieldName) {
-        ContactFields contactFields = null;
-
-        switch (fieldName) {
-            case "id":
-                contactFields = ContactFields.ID;
-                break;
-            case "phone":
-                contactFields = ContactFields.PHONE;
-                break;
-            case "email":
-                contactFields = ContactFields.EMAIL;
-                break;
-            case "skype":
-                contactFields = ContactFields.SKYPE;
-                break;
-            case "namefull":
-                contactFields = ContactFields.NAME_FULL;
-                break;
-        }
-
-        return contactFields;
-    }
 }

@@ -5,17 +5,16 @@
  */
 package addressbook;
 
-import static addressbook.AddressBook.contactList;
 import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import java.util.Vector;
+import addressbook.listeners.IAddEditContactListener;
+import javax.swing.RowFilter;
 
 /**
  *
@@ -23,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class AddressBookFrame extends javax.swing.JFrame {
 
-    static List<Contact> contactList = new ArrayList<Contact>();
+    List<Contact> contactList = new ArrayList<Contact>();
 
     ContactDAO contactDAO = new ContactDAO();
 
@@ -35,12 +34,19 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
         setLocationRelativeTo(null);
 
-        jtContacts.setModel(GetDataForGrid());
+        contactList = contactDAO.selectAll();
+
+        jtContacts.setModel(GetDataForGrid(contactList));
         jtContacts.requestFocus();
+        jtContacts.getSelectionModel().setSelectionInterval(0, 0);
+
         UIManager.put("OptionPane.okButtonText", "Понятно");
+
+        jtContacts.setAutoCreateRowSorter(true);
+        jtContacts.getRowSorter().toggleSortOrder(0);
     }
 
-    private DefaultTableModel GetDataForGrid() {
+    private DefaultTableModel GetDataForGrid(List<Contact> contactList) {
         DefaultTableModel defaultTableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -65,8 +71,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
             }
 
         };
-
-        contactList = contactDAO.selectAll();
 
         Vector<String> columns = new Vector<>();
         columns.add("ID");
@@ -110,7 +114,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
         jbView = new javax.swing.JButton();
         jbRefresh = new javax.swing.JButton();
         jbFind = new javax.swing.JButton();
-        jbSort = new javax.swing.JButton();
         jbExit = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtContacts = new javax.swing.JTable();
@@ -124,7 +127,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
-        jbAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/notification_add.png"))); // NOI18N
+        jbAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/add.png"))); // NOI18N
         jbAdd.setToolTipText("Добавить");
         jbAdd.setBorderPainted(false);
         jbAdd.setFocusPainted(false);
@@ -138,7 +141,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jbAdd);
 
-        jbEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/document_edit.png"))); // NOI18N
+        jbEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/edit_blue.png"))); // NOI18N
         jbEdit.setToolTipText("Изменить");
         jbEdit.setBorderPainted(false);
         jbEdit.setFocusPainted(false);
@@ -150,7 +153,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jbEdit);
 
-        jbDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/notification_remove.png"))); // NOI18N
+        jbDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/delete.png"))); // NOI18N
         jbDelete.setToolTipText("Удалить");
         jbDelete.setBorderPainted(false);
         jbDelete.setFocusPainted(false);
@@ -162,7 +165,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jbDelete);
 
-        jbView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/view.png"))); // NOI18N
+        jbView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/view_yellow.png"))); // NOI18N
         jbView.setToolTipText("Просмотр");
         jbView.setBorderPainted(false);
         jbView.setFocusPainted(false);
@@ -191,7 +194,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         jToolBar1.add(jbRefresh);
 
         jbFind.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/search.png"))); // NOI18N
-        jbFind.setToolTipText("Искать");
+        jbFind.setToolTipText("Фильтровать");
         jbFind.setBorderPainted(false);
         jbFind.setFocusPainted(false);
         jbFind.setFocusable(false);
@@ -202,19 +205,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jbFind);
 
-        jbSort.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/view-sort-descending.png"))); // NOI18N
-        jbSort.setToolTipText("Сортировать");
-        jbSort.setBorderPainted(false);
-        jbSort.setFocusPainted(false);
-        jbSort.setFocusable(false);
-        jbSort.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbSortActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(jbSort);
-
-        jbExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/Log Out.png"))); // NOI18N
+        jbExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/exit.png"))); // NOI18N
         jbExit.setToolTipText("Выйти");
         jbExit.setBorderPainted(false);
         jbExit.setFocusPainted(false);
@@ -238,6 +229,11 @@ public class AddressBookFrame extends javax.swing.JFrame {
             }
         ));
         jtContacts.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jtContacts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtContactsMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jtContacts);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -264,20 +260,32 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
     private void jbAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAddActionPerformed
         Contact contact = new Contact();
-        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditFrom.ADD);
-        addEditContactDialog.modeAddEditFrom = EModeAddEditFrom.ADD;
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditForm.ADD);
 
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);
-        
-//        addEditContactDialog.jbAccept.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(java.awt.event.ActionEvent evt1) {
-//                jbAcceptActionPerformed(evt1);
-//            }
-//        });
-//        
-        
+
+        addEditContactDialog.addActionListener(new IAddEditContactListener() {
+            @Override
+            public void addNewContact() {
+                try {
+                    switch (addEditContactDialog.getModeAddEditForm()) {
+                        case ADD: {
+                            contactDAO.insert(addEditContactDialog.getContact());
+                            break;
+                        }
+                        case EDIT: {
+                            contactDAO.update(addEditContactDialog.getContact());
+                            break;
+                        }
+                    }
+
+                    addEditContactDialog.setResult(true);
+                } catch (Throwable t) {
+                    System.err.println("Ошибка при обновлении таблицы\n" + t);
+                }
+            }
+        });
 
         if (addEditContactDialog.getResult()) {
             contact = addEditContactDialog.getContact();
@@ -303,6 +311,8 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
     private void jbEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditActionPerformed
         int curRow = jtContacts.getSelectedRow();
+        curRow = jtContacts.convertRowIndexToModel(curRow);
+
         if (curRow == -1) {
             JOptionPane.showMessageDialog(this, "Выберите строку для редактирования", "Предупреждение", JOptionPane.OK_OPTION);
             return;
@@ -314,7 +324,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
 //        Contact contact = contactList.get(indexOfCurContact);
         Contact contact = contactDAO.findEntityById(id);
 
-        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditFrom.EDIT);
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditForm.EDIT);
 
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);
@@ -330,25 +340,76 @@ public class AddressBookFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jbEditActionPerformed
 
     private void jbRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRefreshActionPerformed
-        jtContacts.setModel(GetDataForGrid());
+        contactList = contactDAO.selectAll();
+
+        jtContacts.setModel(GetDataForGrid(contactList));
         jtContacts.requestFocus();
+        jtContacts.getSelectionModel().setSelectionInterval(0, 0);
     }//GEN-LAST:event_jbRefreshActionPerformed
 
     private void jbDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDeleteActionPerformed
-        JOptionPane.showMessageDialog(this, "Данный функционал еще не реализован", "Предупреждение", JOptionPane.OK_OPTION);
+        int curRow = jtContacts.getSelectedRow();
+        curRow = jtContacts.convertRowIndexToModel(curRow);
+
+        if (curRow == -1) {
+            JOptionPane.showMessageDialog(this, "Выберите строку для удаления", "Предупреждение", JOptionPane.OK_OPTION);
+            return;
+        }
+
+        int id = (int) jtContacts.getModel().getValueAt(curRow, 0);
+
+        contactDAO.delete(id);
+        contactList.removeIf(contact -> contact.getId() == id);
+        DefaultTableModel model = (DefaultTableModel) jtContacts.getModel();
+        model.removeRow(curRow);
+        int tmp = model.getRowCount();
+
+        jtContacts.getSelectionModel().setSelectionInterval(model.getRowCount() > curRow ? curRow : model.getRowCount() - 1, model.getRowCount() > curRow ? curRow : model.getRowCount() - 1);
     }//GEN-LAST:event_jbDeleteActionPerformed
 
     private void jbViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbViewActionPerformed
-        JOptionPane.showMessageDialog(this, "Данный функционал еще не реализован", "Предупреждение", JOptionPane.OK_OPTION);
+        showContact();
     }//GEN-LAST:event_jbViewActionPerformed
 
+    private void showContact() {
+        int curRow = jtContacts.getSelectedRow();
+        curRow = jtContacts.convertRowIndexToModel(curRow);
+
+        if (curRow == -1) {
+            JOptionPane.showMessageDialog(this, "Выберите запись для просмотра", "Предупреждение", JOptionPane.OK_OPTION);
+            return;
+        }
+        int id = (int) jtContacts.getModel().getValueAt(curRow, 0);
+        Contact contact = contactDAO.findEntityById(id);
+
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditForm.VIEW);
+
+        addEditContactDialog.setLocationRelativeTo(this);
+        addEditContactDialog.setVisible(true);
+    }
+
     private void jbFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbFindActionPerformed
-        JOptionPane.showMessageDialog(this, "Данный функционал еще не реализован", "Предупреждение", JOptionPane.OK_OPTION);
+        FilterDialog filterDialog = new FilterDialog(contactList);
+
+        filterDialog.setLocationRelativeTo(this);
+        filterDialog.setVisible(true);
+
+        if (filterDialog.getResult()) {
+            contactList = filterDialog.getContactList();
+
+            jtContacts.setModel(GetDataForGrid(contactList));
+            jtContacts.requestFocus();
+            jtContacts.getSelectionModel().setSelectionInterval(0, 0);
+        }
     }//GEN-LAST:event_jbFindActionPerformed
 
-    private void jbSortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSortActionPerformed
-        JOptionPane.showMessageDialog(this, "Данный функционал еще не реализован", "Предупреждение", JOptionPane.OK_OPTION);
-    }//GEN-LAST:event_jbSortActionPerformed
+    private void jtContactsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtContactsMouseClicked
+        if (evt.getClickCount() == 2) {
+            evt.consume();
+
+            showContact();
+        }
+    }//GEN-LAST:event_jtContactsMouseClicked
 
     /**
      * @param args the command line arguments
@@ -397,7 +458,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
     private javax.swing.JButton jbExit;
     private javax.swing.JButton jbFind;
     private javax.swing.JButton jbRefresh;
-    private javax.swing.JButton jbSort;
     private javax.swing.JButton jbView;
     private javax.swing.JTable jtContacts;
     // End of variables declaration//GEN-END:variables
