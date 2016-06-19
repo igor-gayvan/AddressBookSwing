@@ -40,6 +40,8 @@ public class AddressBookFrame extends javax.swing.JFrame {
         jtContacts.getSelectionModel().setSelectionInterval(0, 0);
 
         UIManager.put("OptionPane.okButtonText", "Понятно");
+
+        jtContacts.setAutoCreateRowSorter(true);
     }
 
     private DefaultTableModel GetDataForGrid(List<Contact> contactList) {
@@ -110,7 +112,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
         jbView = new javax.swing.JButton();
         jbRefresh = new javax.swing.JButton();
         jbFind = new javax.swing.JButton();
-        jbSort = new javax.swing.JButton();
         jbExit = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtContacts = new javax.swing.JTable();
@@ -201,18 +202,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
             }
         });
         jToolBar1.add(jbFind);
-
-        jbSort.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/sort.png"))); // NOI18N
-        jbSort.setToolTipText("Сортировать");
-        jbSort.setBorderPainted(false);
-        jbSort.setFocusPainted(false);
-        jbSort.setFocusable(false);
-        jbSort.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbSortActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(jbSort);
 
         jbExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/exit.png"))); // NOI18N
         jbExit.setToolTipText("Выйти");
@@ -397,10 +386,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jbFindActionPerformed
 
-    private void jbSortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSortActionPerformed
-        JOptionPane.showMessageDialog(this, "Данный функционал еще не реализован", "Предупреждение", JOptionPane.OK_OPTION);
-    }//GEN-LAST:event_jbSortActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -448,7 +433,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
     private javax.swing.JButton jbExit;
     private javax.swing.JButton jbFind;
     private javax.swing.JButton jbRefresh;
-    private javax.swing.JButton jbSort;
     private javax.swing.JButton jbView;
     private javax.swing.JTable jtContacts;
     // End of variables declaration//GEN-END:variables
