@@ -100,20 +100,23 @@ public class ContactDAO extends AbstractDAO<Contact> {
 
         try {
             cs = connection.prepareCall(SQL_CONTACT_INSERT);
+            cs.registerOutParameter(1, java.sql.Types.INTEGER);
 
             //IN `pi_contact_id` INTEGER(11),
             //IN `pi_name_full` VARCHAR(255),
             //IN `pi_phone` VARCHAR(255),
             //IN `pi_skype` VARCHAR(255),
             //IN `pi_email` VARCHAR(255)            
-            cs.setNull("pi_contact_id", java.sql.Types.INTEGER);
+//            cs.setNull("pi_contact_id", java.sql.Types.INTEGER);
             cs.setString("pi_name_full", contact.getNameFull());
             cs.setString("pi_phone", contact.getPhone());
             cs.setString("pi_skype", contact.getSkype());
             cs.setString("pi_email", contact.getEmail());
-            cs.registerOutParameter(1, java.sql.Types.INTEGER);
+            
 
             int executeUpdate = cs.executeUpdate();
+            
+           int id = cs.getInt(1);
             
             contact.setId(cs.getInt(1));
 

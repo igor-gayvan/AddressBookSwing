@@ -18,6 +18,7 @@ public class AddEditContactDialog extends javax.swing.JDialog {
 
     private ContactDAO contactDAO = new ContactDAO();
     private Contact contact = new Contact();
+    private boolean result = false;
 
     EModeAddEditFrom modeAddEditFrom;
 
@@ -26,13 +27,7 @@ public class AddEditContactDialog extends javax.swing.JDialog {
      */
     ;
 
-    public Contact getContact() {
-        return contact;
-    }
-
-    public void setContact(Contact contact) {
-        this.contact = contact;
-    }
+   
 
     public AddEditContactDialog() {
         initComponents();
@@ -61,6 +56,18 @@ public class AddEditContactDialog extends javax.swing.JDialog {
         this.contact = contact;
 
         initFields();
+    }
+
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
+    public boolean getResult() {
+        return result;
     }
 
     private void initFields() {
@@ -100,6 +107,12 @@ public class AddEditContactDialog extends javax.swing.JDialog {
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                formKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                formKeyTyped(evt);
             }
         });
 
@@ -237,15 +250,21 @@ public class AddEditContactDialog extends javax.swing.JDialog {
         contact.setSkype(jtfSkype.getText());
         contact.setEmail(jtfEmail.getText());
 
-        switch (modeAddEditFrom) {
-            case ADD: {
-                contactDAO.insert(contact);
-                break;
+        try {
+            switch (modeAddEditFrom) {
+                case ADD: {
+                    contactDAO.insert(contact);
+                    break;
+                }
+                case EDIT: {
+                    contactDAO.update(contact);
+                    break;
+                }
             }
-            case EDIT: {
-                contactDAO.update(contact);
-                break;
-            }
+
+            result = true;
+        } catch (Throwable t) {
+            System.err.println("Ошибка при обновлении таблицы");
         }
 
         dispose();
@@ -260,6 +279,18 @@ public class AddEditContactDialog extends javax.swing.JDialog {
             jbCancel.doClick();
         }
     }//GEN-LAST:event_formKeyPressed
+
+    private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
+        if (KeyEvent.VK_ESCAPE == evt.getKeyCode()) {
+            jbCancel.doClick();
+        }
+    }//GEN-LAST:event_formKeyReleased
+
+    private void formKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyTyped
+        if (KeyEvent.VK_ESCAPE == evt.getKeyCode()) {
+            jbCancel.doClick();
+        }
+    }//GEN-LAST:event_formKeyTyped
 
     /**
      * @param args the command line arguments
