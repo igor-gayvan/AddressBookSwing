@@ -264,7 +264,7 @@ public class AddEditContactDialog extends javax.swing.JDialog {
 
             result = true;
         } catch (Throwable t) {
-            System.err.println("Ошибка при обновлении таблицы");
+            System.err.println("Ошибка при обновлении таблицы\n" + t);
         }
 
         dispose();
