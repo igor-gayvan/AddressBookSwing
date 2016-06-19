@@ -14,6 +14,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import java.util.Vector;
 import addressbook.listeners.IAddEditContactListener;
+import javax.swing.RowFilter;
 
 /**
  *
@@ -42,6 +43,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         UIManager.put("OptionPane.okButtonText", "Понятно");
 
         jtContacts.setAutoCreateRowSorter(true);
+        jtContacts.getRowSorter().toggleSortOrder(0);
     }
 
     private DefaultTableModel GetDataForGrid(List<Contact> contactList) {
@@ -227,6 +229,11 @@ public class AddressBookFrame extends javax.swing.JFrame {
             }
         ));
         jtContacts.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jtContacts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtContactsMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jtContacts);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -342,6 +349,8 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
     private void jbDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDeleteActionPerformed
         int curRow = jtContacts.getSelectedRow();
+        curRow = jtContacts.convertRowIndexToModel(curRow);
+
         if (curRow == -1) {
             JOptionPane.showMessageDialog(this, "Выберите строку для удаления", "Предупреждение", JOptionPane.OK_OPTION);
             return;
@@ -359,7 +368,13 @@ public class AddressBookFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jbDeleteActionPerformed
 
     private void jbViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbViewActionPerformed
+        showContact();
+    }//GEN-LAST:event_jbViewActionPerformed
+
+    private void showContact() {
         int curRow = jtContacts.getSelectedRow();
+        curRow = jtContacts.convertRowIndexToModel(curRow);
+
         if (curRow == -1) {
             JOptionPane.showMessageDialog(this, "Выберите запись для просмотра", "Предупреждение", JOptionPane.OK_OPTION);
             return;
@@ -371,7 +386,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);
-    }//GEN-LAST:event_jbViewActionPerformed
+    }
 
     private void jbFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbFindActionPerformed
         FilterDialog filterDialog = new FilterDialog(contactList);
@@ -387,6 +402,14 @@ public class AddressBookFrame extends javax.swing.JFrame {
             jtContacts.getSelectionModel().setSelectionInterval(0, 0);
         }
     }//GEN-LAST:event_jbFindActionPerformed
+
+    private void jtContactsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtContactsMouseClicked
+        if (evt.getClickCount() == 2) {
+            evt.consume();
+
+            showContact();
+        }
+    }//GEN-LAST:event_jtContactsMouseClicked
 
     /**
      * @param args the command line arguments
