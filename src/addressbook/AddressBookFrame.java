@@ -213,6 +213,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jtContacts.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jtContacts);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -245,19 +246,23 @@ public class AddressBookFrame extends javax.swing.JFrame {
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);
 
-        contact = addEditContactDialog.getContact();
-        contactList.add(contact);
+        if (addEditContactDialog.getResult()) {
 
-        DefaultTableModel model = (DefaultTableModel) jtContacts.getModel();
-        Vector<Object> rowData = new Vector<>();
+            contact = addEditContactDialog.getContact();
+            contactList.add(contact);
 
-        rowData.add(contact.getId());
-        rowData.add(contact.getNameFull());
-        rowData.add(contact.getSkype());
-        rowData.add(contact.getPhone());
-        rowData.add(contact.getEmail());
+            DefaultTableModel model = (DefaultTableModel) jtContacts.getModel();
+            Vector<Object> rowData = new Vector<>();
 
-        model.addRow(rowData);
+            rowData.add(contact.getId());
+            rowData.add(contact.getNameFull());
+            rowData.add(contact.getSkype());
+            rowData.add(contact.getPhone());
+            rowData.add(contact.getEmail());
+
+            model.addRow(rowData);
+            jtContacts.getSelectionModel().setSelectionInterval(model.getRowCount()-1, model.getRowCount()-1);
+        }
     }//GEN-LAST:event_jbAddActionPerformed
 
     private void jbExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbExitActionPerformed
@@ -277,12 +282,14 @@ public class AddressBookFrame extends javax.swing.JFrame {
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);
 
-        contactList.set(indexOfCurContact, addEditContactDialog.getContact());
+        if (addEditContactDialog.getResult()) {
+            contactList.set(indexOfCurContact, addEditContactDialog.getContact());
 
-        jtContacts.getModel().setValueAt(contactList.get(curRow).getNameFull(), curRow, 1);
-        jtContacts.getModel().setValueAt(contactList.get(curRow).getSkype(), curRow, 2);
-        jtContacts.getModel().setValueAt(contactList.get(curRow).getPhone(), curRow, 3);
-        jtContacts.getModel().setValueAt(contactList.get(curRow).getEmail(), curRow, 4);
+            jtContacts.getModel().setValueAt(contact.getNameFull(), curRow, 1);
+            jtContacts.getModel().setValueAt(contact.getSkype(), curRow, 2);
+            jtContacts.getModel().setValueAt(contact.getPhone(), curRow, 3);
+            jtContacts.getModel().setValueAt(contact.getEmail(), curRow, 4);
+        }
     }//GEN-LAST:event_jbEditActionPerformed
 
     private void jbRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRefreshActionPerformed
