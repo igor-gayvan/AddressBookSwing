@@ -108,6 +108,12 @@ public class AddEditContactDialog extends javax.swing.JDialog {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                formKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                formKeyTyped(evt);
+            }
         });
 
         jbAccept.setText("Принять");
@@ -273,6 +279,18 @@ public class AddEditContactDialog extends javax.swing.JDialog {
             jbCancel.doClick();
         }
     }//GEN-LAST:event_formKeyPressed
+
+    private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
+        if (KeyEvent.VK_ESCAPE == evt.getKeyCode()) {
+            jbCancel.doClick();
+        }
+    }//GEN-LAST:event_formKeyReleased
+
+    private void formKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyTyped
+        if (KeyEvent.VK_ESCAPE == evt.getKeyCode()) {
+            jbCancel.doClick();
+        }
+    }//GEN-LAST:event_formKeyTyped
 
     /**
      * @param args the command line arguments

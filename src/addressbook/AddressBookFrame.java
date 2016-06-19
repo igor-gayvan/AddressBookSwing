@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -35,6 +36,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
         jtContacts.setModel(GetDataForGrid());
         jtContacts.requestFocus();
+        UIManager.put("OptionPane.okButtonText", "Понятно");
     }
 
     private DefaultTableModel GetDataForGrid() {
@@ -268,7 +270,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
         addEditContactDialog.setVisible(true);
 
         if (addEditContactDialog.getResult()) {
-
             contact = addEditContactDialog.getContact();
             contactList.add(contact);
 
