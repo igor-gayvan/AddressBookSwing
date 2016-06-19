@@ -8,6 +8,7 @@ package addressbook;
 import static addressbook.AddressBook.contactList;
 import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -268,6 +269,15 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);
+        
+//        addEditContactDialog.jbAccept.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(java.awt.event.ActionEvent evt1) {
+//                jbAcceptActionPerformed(evt1);
+//            }
+//        });
+//        
+        
 
         if (addEditContactDialog.getResult()) {
             contact = addEditContactDialog.getContact();

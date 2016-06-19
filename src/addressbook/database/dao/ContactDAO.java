@@ -100,7 +100,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
 
         try {
             cs = connection.prepareCall(SQL_CONTACT_INSERT);
-            cs.registerOutParameter(1, java.sql.Types.INTEGER);
+            cs.registerOutParameter("pi_contact_id", java.sql.Types.INTEGER);
 
             //IN `pi_contact_id` INTEGER(11),
             //IN `pi_name_full` VARCHAR(255),
@@ -116,9 +116,9 @@ public class ContactDAO extends AbstractDAO<Contact> {
 
             int executeUpdate = cs.executeUpdate();
             
-           int id = cs.getInt(1);
+           int id = cs.getInt("pi_contact_id");
             
-            contact.setId(cs.getInt(1));
+            contact.setId(cs.getInt("pi_contact_id"));
 
 //            try (ResultSet rs = cs.getGeneratedKeys()) {
 //                if (rs.next()) {
