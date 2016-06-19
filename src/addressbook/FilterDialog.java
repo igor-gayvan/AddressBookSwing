@@ -9,8 +9,6 @@ import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
 import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
-import addressbook.listeners.IAddEditContactListener;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
