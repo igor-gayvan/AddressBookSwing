@@ -238,12 +238,14 @@ public class AddressBookFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAddActionPerformed
-        AddEditContactDialog addEditContactDialog = new AddEditContactDialog();
-        addEditContactDialog.setTitle("Добавление");
+        Contact contact = new Contact();
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditFrom.ADD);
+        addEditContactDialog.modeAddEditFrom = EModeAddEditFrom.ADD;
+
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);
 
-        Contact contact = addEditContactDialog.getContact();
+        contact = addEditContactDialog.getContact();
         contactList.add(contact);
 
         DefaultTableModel model = (DefaultTableModel) jtContacts.getModel();
@@ -265,13 +267,16 @@ public class AddressBookFrame extends javax.swing.JFrame {
     private void jbEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditActionPerformed
         int curRow = jtContacts.getSelectedRow();
         int id = (int) jtContacts.getModel().getValueAt(curRow, 0);
+        int indexOfCurContact = contactList.indexOf(new Contact(id));
 
-        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(id);
-        addEditContactDialog.setTitle("Изменение");
+//        Contact contact = contactList.get(indexOfCurContact);
+        Contact contact = contactDAO.findEntityById(id);
+
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditFrom.EDIT);
+
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);
 
-        int indexOfCurContact = contactList.indexOf(new Contact(id));
         contactList.set(indexOfCurContact, addEditContactDialog.getContact());
 
         jtContacts.getModel().setValueAt(contactList.get(curRow).getNameFull(), curRow, 1);

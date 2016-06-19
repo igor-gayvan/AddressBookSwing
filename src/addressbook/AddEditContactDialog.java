@@ -5,11 +5,9 @@
  */
 package addressbook;
 
-import static addressbook.AddressBook.contactList;
 import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 
 /**
@@ -21,8 +19,7 @@ public class AddEditContactDialog extends javax.swing.JDialog {
     private ContactDAO contactDAO = new ContactDAO();
     private Contact contact = new Contact();
 
-    EModeAddEditFrom modeAddEditFrom;    
-    
+    EModeAddEditFrom modeAddEditFrom;
 
     /**
      * Creates new form FrameAddContact
@@ -40,22 +37,28 @@ public class AddEditContactDialog extends javax.swing.JDialog {
     public AddEditContactDialog() {
         initComponents();
         jtfNameFull.requestFocus();
-        modeAddEditFrom = EModeAddEditFrom.ADD;
 
         this.setModal(true);
 
         initFields();
     }
 
-    public AddEditContactDialog(int id) {
+    public AddEditContactDialog(Contact contact, EModeAddEditFrom modeAddEditFrom) {
         initComponents();
         jtfNameFull.requestFocus();
-        modeAddEditFrom = EModeAddEditFrom.EDIT;
-
+        switch (modeAddEditFrom) {
+            case ADD: {
+                this.setTitle("Добавление");
+                break;
+            }
+            case EDIT: {
+                this.setTitle("Изменение");
+                break;
+            }
+        }
+        this.modeAddEditFrom = modeAddEditFrom;
         this.setModal(true);
-
-        contact.setId(id);
-        contact = contactDAO.findEntityById(contact.getId());
+        this.contact = contact;
 
         initFields();
     }
@@ -94,6 +97,11 @@ public class AddEditContactDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Добавление");
         setName("jfrAddEdditContact"); // NOI18N
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jbAccept.setText("Принять");
         jbAccept.setName(""); // NOI18N
@@ -215,8 +223,6 @@ public class AddEditContactDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.getAccessibleContext().setAccessibleName(" Контакт ");
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -236,9 +242,7 @@ public class AddEditContactDialog extends javax.swing.JDialog {
                 contactDAO.insert(contact);
                 break;
             }
-
             case EDIT: {
-                contact.setId(Integer.valueOf(jtfId.getText()));
                 contactDAO.update(contact);
                 break;
             }
@@ -250,6 +254,12 @@ public class AddEditContactDialog extends javax.swing.JDialog {
     private void jtfIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfIdActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jtfIdActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        if (KeyEvent.VK_ESCAPE == evt.getKeyCode()) {
+            jbCancel.doClick();
+        }
+    }//GEN-LAST:event_formKeyPressed
 
     /**
      * @param args the command line arguments
@@ -291,46 +301,6 @@ public class AddEditContactDialog extends javax.swing.JDialog {
                 new AddEditContactDialog().setVisible(true);
             }
         });
-    }
-
-    public JTextField getJtfEmail() {
-        return jtfEmail;
-    }
-
-    public void setJtfEmail(JTextField jtfEmail) {
-        this.jtfEmail = jtfEmail;
-    }
-
-    public JTextField getJtfId() {
-        return jtfId;
-    }
-
-    public void setJtfId(String jtfIdText) {
-        this.jtfId.setText(jtfIdText);
-    }
-
-    public JTextField getJtfNameFull() {
-        return jtfNameFull;
-    }
-
-    public void setJtfNameFull(JTextField jtfNameFull) {
-        this.jtfNameFull = jtfNameFull;
-    }
-
-    public JTextField getJtfPhone() {
-        return jtfPhone;
-    }
-
-    public void setJtfPhone(JTextField jtfPhone) {
-        this.jtfPhone = jtfPhone;
-    }
-
-    public JTextField getJtfSkype() {
-        return jtfSkype;
-    }
-
-    public void setJtfSkype(JTextField jtfSkype) {
-        this.jtfSkype = jtfSkype;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
