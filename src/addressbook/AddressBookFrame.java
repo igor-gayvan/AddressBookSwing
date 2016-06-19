@@ -5,17 +5,15 @@
  */
 package addressbook;
 
-import static addressbook.AddressBook.contactList;
 import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import java.util.Vector;
+import addressbook.listeners.IAddEditContactListener;
 
 /**
  *
@@ -124,7 +122,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
-        jbAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/notification_add.png"))); // NOI18N
+        jbAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/add.png"))); // NOI18N
         jbAdd.setToolTipText("Добавить");
         jbAdd.setBorderPainted(false);
         jbAdd.setFocusPainted(false);
@@ -138,7 +136,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jbAdd);
 
-        jbEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/document_edit.png"))); // NOI18N
+        jbEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/edit_blue.png"))); // NOI18N
         jbEdit.setToolTipText("Изменить");
         jbEdit.setBorderPainted(false);
         jbEdit.setFocusPainted(false);
@@ -150,7 +148,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jbEdit);
 
-        jbDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/notification_remove.png"))); // NOI18N
+        jbDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/delete.png"))); // NOI18N
         jbDelete.setToolTipText("Удалить");
         jbDelete.setBorderPainted(false);
         jbDelete.setFocusPainted(false);
@@ -162,7 +160,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jbDelete);
 
-        jbView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/view.png"))); // NOI18N
+        jbView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/view_yellow.png"))); // NOI18N
         jbView.setToolTipText("Просмотр");
         jbView.setBorderPainted(false);
         jbView.setFocusPainted(false);
@@ -202,7 +200,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jbFind);
 
-        jbSort.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/view-sort-descending.png"))); // NOI18N
+        jbSort.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/sort.png"))); // NOI18N
         jbSort.setToolTipText("Сортировать");
         jbSort.setBorderPainted(false);
         jbSort.setFocusPainted(false);
@@ -214,7 +212,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         });
         jToolBar1.add(jbSort);
 
-        jbExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/Log Out.png"))); // NOI18N
+        jbExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/exit.png"))); // NOI18N
         jbExit.setToolTipText("Выйти");
         jbExit.setBorderPainted(false);
         jbExit.setFocusPainted(false);
@@ -264,20 +262,41 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
     private void jbAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAddActionPerformed
         Contact contact = new Contact();
-        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditFrom.ADD);
-        addEditContactDialog.modeAddEditFrom = EModeAddEditFrom.ADD;
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditForm.ADD);
 
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);
-        
-//        addEditContactDialog.jbAccept.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(java.awt.event.ActionEvent evt1) {
-//                jbAcceptActionPerformed(evt1);
-//            }
-//        });
-//        
-        
+
+        addEditContactDialog.addActionListener(new IAddEditContactListener() {
+            @Override
+            public void jbAcceptActionPerformed(java.awt.event.ActionEvent evt) {
+
+                addEditContactDialog.getContact().setNameFull(addEditContactDialog.getJtfNameFull().getText());
+                addEditContactDialog.getContact().setPhone(addEditContactDialog.getJtfPhone().getText());
+                addEditContactDialog.getContact().setSkype(addEditContactDialog.getJtfSkype().getText());
+                addEditContactDialog.getContact().setEmail(addEditContactDialog.getJtfEmail().getText());
+
+                try {
+                    switch (addEditContactDialog.getModeAddEditForm()) {
+                        case ADD: {
+                            contactDAO.insert(addEditContactDialog.getContact());
+                            break;
+                        }
+                        case EDIT: {
+                            contactDAO.update(addEditContactDialog.getContact());
+                            break;
+                        }
+                    }
+
+                    addEditContactDialog.setResult(true);
+                } catch (Throwable t) {
+                    System.err.println("Ошибка при обновлении таблицы\n" + t);
+                }
+
+                dispose();
+            }
+
+        });
 
         if (addEditContactDialog.getResult()) {
             contact = addEditContactDialog.getContact();
@@ -314,7 +333,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
 //        Contact contact = contactList.get(indexOfCurContact);
         Contact contact = contactDAO.findEntityById(id);
 
-        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditFrom.EDIT);
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditForm.EDIT);
 
         addEditContactDialog.setLocationRelativeTo(this);
         addEditContactDialog.setVisible(true);

@@ -9,6 +9,8 @@ package addressbook.listeners;
  *
  * @author Igor Gayvan
  */
-public interface IAcceptAddEdit {
-    
+public interface IAddEditContactListener {
+
+    public void jbAcceptActionPerformed(java.awt.event.ActionEvent evt);
+
 }

@@ -9,6 +9,6 @@ package addressbook;
  *
  * @author Igor Gayvan
  */
-public enum EModeAddEditFrom {
+public enum EModeAddEditForm {
     ADD, EDIT, VIEW;
 }
