@@ -304,6 +304,8 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
     private void jbEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditActionPerformed
         int curRow = jtContacts.getSelectedRow();
+        curRow = jtContacts.convertRowIndexToModel(curRow);
+
         if (curRow == -1) {
             JOptionPane.showMessageDialog(this, "Выберите строку для редактирования", "Предупреждение", JOptionPane.OK_OPTION);
             return;
