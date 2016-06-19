@@ -5,7 +5,6 @@
  */
 package addressbook;
 
-import static addressbook.AddressBook.contactList;
 import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import java.util.Vector;
 import addressbook.listeners.IAddEditContactListener;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -23,7 +21,7 @@ import javax.swing.table.TableModel;
  */
 public class AddressBookFrame extends javax.swing.JFrame {
 
-    static List<Contact> contactList = new ArrayList<Contact>();
+    List<Contact> contactList = new ArrayList<Contact>();
 
     ContactDAO contactDAO = new ContactDAO();
 
@@ -35,14 +33,16 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
         setLocationRelativeTo(null);
 
-        jtContacts.setModel(GetDataForGrid());
+        contactList = contactDAO.selectAll();
+
+        jtContacts.setModel(GetDataForGrid(contactList));
         jtContacts.requestFocus();
         jtContacts.getSelectionModel().setSelectionInterval(0, 0);
 
         UIManager.put("OptionPane.okButtonText", "Понятно");
     }
 
-    private DefaultTableModel GetDataForGrid() {
+    private DefaultTableModel GetDataForGrid(List<Contact> contactList) {
         DefaultTableModel defaultTableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -67,8 +67,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
             }
 
         };
-
-        contactList = contactDAO.selectAll();
 
         Vector<String> columns = new Vector<>();
         columns.add("ID");
@@ -193,7 +191,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
         jToolBar1.add(jbRefresh);
 
         jbFind.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addressbook/images/search.png"))); // NOI18N
-        jbFind.setToolTipText("Искать");
+        jbFind.setToolTipText("Фильтровать");
         jbFind.setBorderPainted(false);
         jbFind.setFocusPainted(false);
         jbFind.setFocusable(false);
@@ -344,7 +342,9 @@ public class AddressBookFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jbEditActionPerformed
 
     private void jbRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRefreshActionPerformed
-        jtContacts.setModel(GetDataForGrid());
+        contactList = contactDAO.selectAll();
+
+        jtContacts.setModel(GetDataForGrid(contactList));
         jtContacts.requestFocus();
         jtContacts.getSelectionModel().setSelectionInterval(0, 0);
     }//GEN-LAST:event_jbRefreshActionPerformed
@@ -368,11 +368,33 @@ public class AddressBookFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jbDeleteActionPerformed
 
     private void jbViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbViewActionPerformed
-        JOptionPane.showMessageDialog(this, "Данный функционал еще не реализован", "Предупреждение", JOptionPane.OK_OPTION);
+        int curRow = jtContacts.getSelectedRow();
+        if (curRow == -1) {
+            JOptionPane.showMessageDialog(this, "Выберите запись для просмотра", "Предупреждение", JOptionPane.OK_OPTION);
+            return;
+        }
+        int id = (int) jtContacts.getModel().getValueAt(curRow, 0);
+        Contact contact = contactDAO.findEntityById(id);
+
+        AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditForm.VIEW);
+
+        addEditContactDialog.setLocationRelativeTo(this);
+        addEditContactDialog.setVisible(true);
     }//GEN-LAST:event_jbViewActionPerformed
 
     private void jbFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbFindActionPerformed
-        JOptionPane.showMessageDialog(this, "Данный функционал еще не реализован", "Предупреждение", JOptionPane.OK_OPTION);
+        FilterDialog filterDialog = new FilterDialog(contactList);
+
+        filterDialog.setLocationRelativeTo(this);
+        filterDialog.setVisible(true);
+
+        if (filterDialog.getResult()) {
+            contactList = filterDialog.getContactList();
+
+            jtContacts.setModel(GetDataForGrid(contactList));
+            jtContacts.requestFocus();
+            jtContacts.getSelectionModel().setSelectionInterval(0, 0);
+        }
     }//GEN-LAST:event_jbFindActionPerformed
 
     private void jbSortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSortActionPerformed
