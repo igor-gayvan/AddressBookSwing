@@ -5,12 +5,14 @@
  */
 package addressbook.listeners;
 
+import addressbook.subject.contact.Contact;
+
 /**
  *
  * @author Igor Gayvan
  */
 public interface IAddEditContactListener {
 
-    public void jbAcceptActionPerformed(java.awt.event.ActionEvent evt);
+    public void addNewContact();
 
 }

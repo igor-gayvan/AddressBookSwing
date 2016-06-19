@@ -6,7 +6,6 @@
 package addressbook;
 
 import addressbook.database.dao.ContactDAO;
-import addressbook.listeners.IActionListener;
 import addressbook.subject.contact.Contact;
 import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
@@ -26,13 +25,6 @@ public class AddEditContactDialog extends javax.swing.JDialog {
     private EModeAddEditForm modeAddEditForm;
 
     private List<IAddEditContactListener> addEditContactListeners;
-
-    /**
-     * Creates new form FrameAddContact
-     */
-    ;
-
-   
 
     public AddEditContactDialog() {
         initComponents();
@@ -307,8 +299,15 @@ public class AddEditContactDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jbCancelActionPerformed
 
     private void jbAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAcceptActionPerformed
+        this.contact.setNameFull(jtfNameFull.getText());
+        this.contact.setPhone(jtfPhone.getText());
+        this.contact.setSkype(jtfSkype.getText());
+        this.contact.setEmail(jtfEmail.getText());
 
-
+        for (IAddEditContactListener addEditContactListener : addEditContactListeners) {
+            addEditContactListener.addNewContact();
+        }
+        dispose();
     }//GEN-LAST:event_jbAcceptActionPerformed
 
     private void jtfIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfIdActionPerformed
@@ -392,7 +391,7 @@ public class AddEditContactDialog extends javax.swing.JDialog {
     private javax.swing.JTextField jtfSkype;
     // End of variables declaration//GEN-END:variables
 
-    void addActionListener(IAddEditContactListener addEditContactListener) {
+    public void addActionListener(IAddEditContactListener addEditContactListener) {
         addEditContactListeners.add(addEditContactListener);
     }
 

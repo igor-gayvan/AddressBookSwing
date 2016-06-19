@@ -5,6 +5,7 @@
  */
 package addressbook;
 
+import static addressbook.AddressBook.contactList;
 import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import java.util.Vector;
 import addressbook.listeners.IAddEditContactListener;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -35,6 +37,8 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
         jtContacts.setModel(GetDataForGrid());
         jtContacts.requestFocus();
+        jtContacts.getSelectionModel().setSelectionInterval(0, 0);
+
         UIManager.put("OptionPane.okButtonText", "Понятно");
     }
 
@@ -269,13 +273,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
         addEditContactDialog.addActionListener(new IAddEditContactListener() {
             @Override
-            public void jbAcceptActionPerformed(java.awt.event.ActionEvent evt) {
-
-                addEditContactDialog.getContact().setNameFull(addEditContactDialog.getJtfNameFull().getText());
-                addEditContactDialog.getContact().setPhone(addEditContactDialog.getJtfPhone().getText());
-                addEditContactDialog.getContact().setSkype(addEditContactDialog.getJtfSkype().getText());
-                addEditContactDialog.getContact().setEmail(addEditContactDialog.getJtfEmail().getText());
-
+            public void addNewContact() {
                 try {
                     switch (addEditContactDialog.getModeAddEditForm()) {
                         case ADD: {
@@ -292,10 +290,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
                 } catch (Throwable t) {
                     System.err.println("Ошибка при обновлении таблицы\n" + t);
                 }
-
-                dispose();
             }
-
         });
 
         if (addEditContactDialog.getResult()) {
@@ -351,10 +346,25 @@ public class AddressBookFrame extends javax.swing.JFrame {
     private void jbRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRefreshActionPerformed
         jtContacts.setModel(GetDataForGrid());
         jtContacts.requestFocus();
+        jtContacts.getSelectionModel().setSelectionInterval(0, 0);
     }//GEN-LAST:event_jbRefreshActionPerformed
 
     private void jbDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDeleteActionPerformed
-        JOptionPane.showMessageDialog(this, "Данный функционал еще не реализован", "Предупреждение", JOptionPane.OK_OPTION);
+        int curRow = jtContacts.getSelectedRow();
+        if (curRow == -1) {
+            JOptionPane.showMessageDialog(this, "Выберите строку для удаления", "Предупреждение", JOptionPane.OK_OPTION);
+            return;
+        }
+
+        int id = (int) jtContacts.getModel().getValueAt(curRow, 0);
+
+        contactDAO.delete(id);
+        contactList.removeIf(contact -> contact.getId() == id);
+        DefaultTableModel model = (DefaultTableModel) jtContacts.getModel();
+        model.removeRow(curRow);
+        int tmp = model.getRowCount();
+
+        jtContacts.getSelectionModel().setSelectionInterval(model.getRowCount() > curRow ? curRow : model.getRowCount() - 1, model.getRowCount() > curRow ? curRow : model.getRowCount() - 1);
     }//GEN-LAST:event_jbDeleteActionPerformed
 
     private void jbViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbViewActionPerformed
