@@ -5,7 +5,6 @@
  */
 package addressbook;
 
-import static addressbook.AddressBook.contactList;
 import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
 import java.awt.event.KeyEvent;
