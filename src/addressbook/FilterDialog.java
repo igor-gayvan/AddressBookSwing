@@ -7,9 +7,11 @@ package addressbook;
 
 import addressbook.database.dao.ContactDAO;
 import addressbook.subject.contact.Contact;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 import java.util.List;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -28,8 +30,11 @@ public class FilterDialog extends javax.swing.JDialog {
     public FilterDialog(List<Contact> contactList) {
         initComponents();
         jtfNameFull.requestFocus();
-        this.setTitle("Установка параметров фмльтрации");
+        this.setTitle("Установка параметров фильтрации");
         this.setModal(true);
+
+        Image img = new ImageIcon(getClass().getResource("/addressbook/images/search.png")).getImage();
+        this.setIconImage(img);
 
         this.contactList = contactList;
     }
@@ -57,8 +62,6 @@ public class FilterDialog extends javax.swing.JDialog {
     public void setContactList(List<Contact> contactList) {
         this.contactList = contactList;
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -91,7 +94,7 @@ public class FilterDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(" Контакт "));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(" Параметры фильтрации "));
 
         jLabel2.setText("Полное наименование");
 

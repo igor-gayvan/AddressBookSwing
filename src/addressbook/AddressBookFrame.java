@@ -14,7 +14,8 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import java.util.Vector;
 import addressbook.listeners.IAddEditContactListener;
-import javax.swing.RowFilter;
+import java.awt.Image;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -38,12 +39,15 @@ public class AddressBookFrame extends javax.swing.JFrame {
 
         jtContacts.setModel(GetDataForGrid(contactList));
         jtContacts.requestFocus();
-        jtContacts.getSelectionModel().setSelectionInterval(0, 0);
 
         UIManager.put("OptionPane.okButtonText", "Понятно");
 
+        Image img = new ImageIcon(getClass().getResource("/addressbook/images/favicon.png")).getImage();
+        this.setIconImage(img);
+
         jtContacts.setAutoCreateRowSorter(true);
         jtContacts.getRowSorter().toggleSortOrder(0);
+        jtContacts.getSelectionModel().setSelectionInterval(0, 0);
     }
 
     private DefaultTableModel GetDataForGrid(List<Contact> contactList) {
@@ -263,46 +267,31 @@ public class AddressBookFrame extends javax.swing.JFrame {
         AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditForm.ADD);
 
         addEditContactDialog.setLocationRelativeTo(this);
-        addEditContactDialog.setVisible(true);
 
         addEditContactDialog.addActionListener(new IAddEditContactListener() {
             @Override
-            public void addNewContact() {
-                try {
-                    switch (addEditContactDialog.getModeAddEditForm()) {
-                        case ADD: {
-                            contactDAO.insert(addEditContactDialog.getContact());
-                            break;
-                        }
-                        case EDIT: {
-                            contactDAO.update(addEditContactDialog.getContact());
-                            break;
-                        }
-                    }
+            public void addEditContact() {
+                Contact contact = addEditContactDialog.getContact();
 
-                    addEditContactDialog.setResult(true);
-                } catch (Throwable t) {
-                    System.err.println("Ошибка при обновлении таблицы\n" + t);
-                }
+                contactDAO.insert(contact);
+
+                contactList.add(contact);
+
+                DefaultTableModel model = (DefaultTableModel) jtContacts.getModel();
+                Vector<Object> rowData = new Vector<>();
+
+                rowData.add(contact.getId());
+                rowData.add(contact.getNameFull());
+                rowData.add(contact.getSkype());
+                rowData.add(contact.getPhone());
+                rowData.add(contact.getEmail());
+
+                model.addRow(rowData);
+                jtContacts.getSelectionModel().setSelectionInterval(model.getRowCount() - 1, model.getRowCount() - 1);
             }
         });
 
-        if (addEditContactDialog.getResult()) {
-            contact = addEditContactDialog.getContact();
-            contactList.add(contact);
-
-            DefaultTableModel model = (DefaultTableModel) jtContacts.getModel();
-            Vector<Object> rowData = new Vector<>();
-
-            rowData.add(contact.getId());
-            rowData.add(contact.getNameFull());
-            rowData.add(contact.getSkype());
-            rowData.add(contact.getPhone());
-            rowData.add(contact.getEmail());
-
-            model.addRow(rowData);
-            jtContacts.getSelectionModel().setSelectionInterval(model.getRowCount() - 1, model.getRowCount() - 1);
-        }
+        addEditContactDialog.setVisible(true);
     }//GEN-LAST:event_jbAddActionPerformed
 
     private void jbExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbExitActionPerformed
@@ -310,8 +299,7 @@ public class AddressBookFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jbExitActionPerformed
 
     private void jbEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditActionPerformed
-        int curRow = jtContacts.getSelectedRow();
-        curRow = jtContacts.convertRowIndexToModel(curRow);
+        int curRow = jtContacts.convertRowIndexToModel(jtContacts.getSelectedRow());
 
         if (curRow == -1) {
             JOptionPane.showMessageDialog(this, "Выберите строку для редактирования", "Предупреждение", JOptionPane.OK_OPTION);
@@ -319,7 +307,6 @@ public class AddressBookFrame extends javax.swing.JFrame {
         }
 
         int id = (int) jtContacts.getModel().getValueAt(curRow, 0);
-        int indexOfCurContact = contactList.indexOf(new Contact(id));
 
 //        Contact contact = contactList.get(indexOfCurContact);
         Contact contact = contactDAO.findEntityById(id);
@@ -327,16 +314,25 @@ public class AddressBookFrame extends javax.swing.JFrame {
         AddEditContactDialog addEditContactDialog = new AddEditContactDialog(contact, EModeAddEditForm.EDIT);
 
         addEditContactDialog.setLocationRelativeTo(this);
+
+        addEditContactDialog.addActionListener(new IAddEditContactListener() {
+            @Override
+            public void addEditContact() {
+                Contact contact = addEditContactDialog.getContact();
+
+                contactDAO.update(contact);
+                contactList.set(contactList.indexOf(contact), contact);
+
+                int curRow = jtContacts.convertRowIndexToModel(jtContacts.getSelectedRow());
+
+                jtContacts.getModel().setValueAt(contact.getNameFull(), curRow, 1);
+                jtContacts.getModel().setValueAt(contact.getSkype(), curRow, 2);
+                jtContacts.getModel().setValueAt(contact.getPhone(), curRow, 3);
+                jtContacts.getModel().setValueAt(contact.getEmail(), curRow, 4);
+            }
+        });
+
         addEditContactDialog.setVisible(true);
-
-        if (addEditContactDialog.getResult()) {
-            contactList.set(indexOfCurContact, addEditContactDialog.getContact());
-
-            jtContacts.getModel().setValueAt(contact.getNameFull(), curRow, 1);
-            jtContacts.getModel().setValueAt(contact.getSkype(), curRow, 2);
-            jtContacts.getModel().setValueAt(contact.getPhone(), curRow, 3);
-            jtContacts.getModel().setValueAt(contact.getEmail(), curRow, 4);
-        }
     }//GEN-LAST:event_jbEditActionPerformed
 
     private void jbRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRefreshActionPerformed
