@@ -10,7 +10,10 @@ import addressbook.subject.contact.Contact;
 import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 import addressbook.listeners.IAddEditContactListener;
+import java.awt.Image;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -18,29 +21,25 @@ import java.util.List;
  */
 public class AddEditContactDialog extends javax.swing.JDialog {
 
-    private ContactDAO contactDAO = new ContactDAO();
-    private Contact contact = new Contact();
-    private boolean result = false;
-
+    private Contact contact;
     private EModeAddEditForm modeAddEditForm;
 
     private List<IAddEditContactListener> addEditContactListeners;
 
     public AddEditContactDialog() {
-        initComponents();
-        jtfNameFull.requestFocus();
-
-        this.setModal(true);
-
-        initFields();
     }
 
     public AddEditContactDialog(Contact contact, EModeAddEditForm modeAddEditForm) {
+        this.addEditContactListeners = new ArrayList<>();
+
         initComponents();
         jtfNameFull.requestFocus();
         switch (modeAddEditForm) {
             case ADD: {
                 this.setTitle("Добавление");
+                Image img = new ImageIcon(getClass().getResource("/addressbook/images/add.png")).getImage();
+                this.setIconImage(img);
+
                 jbAccept.setVisible(true);
                 jbCancel.setVisible(true);
                 jbExit.setVisible(false);
@@ -48,6 +47,9 @@ public class AddEditContactDialog extends javax.swing.JDialog {
             }
             case EDIT: {
                 this.setTitle("Изменение");
+                Image img = new ImageIcon(getClass().getResource("/addressbook/images/edit_blue.png")).getImage();
+                this.setIconImage(img);
+
                 jbAccept.setVisible(true);
                 jbCancel.setVisible(true);
                 jbExit.setVisible(false);
@@ -55,6 +57,9 @@ public class AddEditContactDialog extends javax.swing.JDialog {
             }
             case VIEW: {
                 this.setTitle("Просмотр");
+                Image img = new ImageIcon(getClass().getResource("/addressbook/images/view_yellow.png")).getImage();
+                this.setIconImage(img);
+
                 jbAccept.setVisible(false);
                 jbCancel.setVisible(false);
                 jbExit.setVisible(true);
@@ -74,10 +79,6 @@ public class AddEditContactDialog extends javax.swing.JDialog {
 
     public void setContact(Contact contact) {
         this.contact = contact;
-    }
-
-    public boolean getResult() {
-        return result;
     }
 
     public JTextField getJtfEmail() {
@@ -126,14 +127,6 @@ public class AddEditContactDialog extends javax.swing.JDialog {
 
     public void setModeAddEditFrom(EModeAddEditForm modeAddEditForm) {
         this.modeAddEditForm = modeAddEditForm;
-    }
-
-    public boolean isResult() {
-        return result;
-    }
-
-    public void setResult(boolean result) {
-        this.result = result;
     }
 
     private void initFields() {
@@ -331,8 +324,9 @@ public class AddEditContactDialog extends javax.swing.JDialog {
         this.contact.setEmail(jtfEmail.getText());
 
         for (IAddEditContactListener addEditContactListener : addEditContactListeners) {
-            addEditContactListener.addNewContact();
+            addEditContactListener.addEditContact();
         }
+
         dispose();
     }//GEN-LAST:event_jbAcceptActionPerformed
 

@@ -5,7 +5,6 @@
  */
 package addressbook.listeners;
 
-import addressbook.subject.contact.Contact;
 
 /**
  *
@@ -13,6 +12,6 @@ import addressbook.subject.contact.Contact;
  */
 public interface IAddEditContactListener {
 
-    public void addNewContact();
+    public void addEditContact();
 
 }
